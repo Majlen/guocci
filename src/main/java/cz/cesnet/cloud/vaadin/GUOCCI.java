@@ -1,6 +1,5 @@
 package cz.cesnet.cloud.vaadin;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -62,7 +61,6 @@ public class GUOCCI extends UI {
 			}
 			return true;
 		});
-
 	}
 
 	public void addButton(Resource r, String link) {
