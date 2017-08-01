@@ -10,10 +10,11 @@ import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 
 import java.util.List;
 
-public class ListView extends VerticalLayout implements View {
+public class ListView extends VerticalLayout implements PolledView {
 	private static final String chooseURI = "http://localhost:8080/chooser/";
 
 	private GridLayout list;
@@ -69,6 +70,10 @@ public class ListView extends VerticalLayout implements View {
 					Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
 			System.out.println(e.getMessage());
 		}
+	}
 
+	@Override
+	public void pollMethod() {
+		//TODO
 	}
 }

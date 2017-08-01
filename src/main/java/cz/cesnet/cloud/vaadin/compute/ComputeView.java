@@ -1,7 +1,6 @@
 package cz.cesnet.cloud.vaadin.compute;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -11,10 +10,11 @@ import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 
 import java.util.List;
 
-public class ComputeView extends VerticalLayout implements View {
+public class ComputeView extends VerticalLayout implements PolledView {
 	private ComputeDAO compute;
 	private ComputeDetail computeDetail;
 	private VerticalLayout linksDetail;
@@ -107,14 +107,6 @@ public class ComputeView extends VerticalLayout implements View {
 			System.out.println(e.getMessage());
 		}
 
-		UI.getCurrent().addPollListener(pollEvent -> {
-			try {
-				compute = occi.getCompute(compute.getResource().getLocation());
-				fillCompute(compute);
-			} catch (CommunicationException e) {
-				System.out.println(e.getMessage());
-			}
-		});
 	}
 
 	private void fillEverything(ComputeDAO compute) throws CommunicationException {
@@ -151,5 +143,15 @@ public class ComputeView extends VerticalLayout implements View {
 
 	public ComputeDAO getCompute() {
 		return compute;
+	}
+
+	@Override
+	public void pollMethod() {
+		try {
+			compute = OCCI.getOCCI(getSession()).getCompute(compute.getResource().getLocation());
+			fillCompute(compute);
+		} catch (CommunicationException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }

@@ -14,9 +14,10 @@ import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 import cz.cesnet.cloud.vaadin.compute.ComputeView;
 
-public class StorageView extends VerticalLayout implements View {
+public class StorageView extends VerticalLayout implements PolledView {
 	private StorageDAO storage;
 	private StorageDetail storageDetail;
 
@@ -83,5 +84,10 @@ public class StorageView extends VerticalLayout implements View {
 
 	private void fillDetails(StorageDAO storage) {
 		storageDetail.refresh(storage);
+	}
+
+	@Override
+	public void pollMethod() {
+		//TODO
 	}
 }

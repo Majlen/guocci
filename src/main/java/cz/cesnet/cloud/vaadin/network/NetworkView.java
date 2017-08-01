@@ -15,9 +15,10 @@ import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 import cz.cesnet.cloud.vaadin.compute.ComputeView;
 
-public class NetworkView extends VerticalLayout implements View {
+public class NetworkView extends VerticalLayout implements PolledView {
 	private IPNetworkDAO network;
 	private NetworkDetail networkDetail;
 
@@ -84,5 +85,10 @@ public class NetworkView extends VerticalLayout implements View {
 
 	private void fillDetails(IPNetworkDAO network) {
 		networkDetail.refresh(network);
+	}
+
+	@Override
+	public void pollMethod() {
+		//TODO
 	}
 }

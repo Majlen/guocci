@@ -1,4 +1,7 @@
 package cz.cesnet.cloud.vaadin.commons;
 
-public interface PolledView {
+import com.vaadin.navigator.View;
+
+public interface PolledView extends View {
+	void pollMethod();
 }

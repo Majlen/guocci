@@ -12,6 +12,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 import cz.cesnet.cloud.vaadin.compute.ComputeView;
 import cz.cesnet.cloud.vaadin.create.CreateView;
 import cz.cesnet.cloud.vaadin.list.ListView;
@@ -53,14 +54,13 @@ public class GUOCCI extends UI {
 
 		navigator.addViewChangeListener(viewChangeEvent -> {
 			removeButtons();
-
-			if (viewChangeEvent.getNewView().getClass().equals(ComputeView.class)) {
-				setPollInterval(5000);
-			} else {
-				setPollInterval(-1);
-			}
+			PolledView newView = (PolledView) viewChangeEvent.getNewView();
+			addPollListener(pollEvent -> newView.pollMethod());
 			return true;
 		});
+
+		//Poll the server for any changes
+		setPollInterval(5000);
 	}
 
 	public void addButton(Resource r, String link) {

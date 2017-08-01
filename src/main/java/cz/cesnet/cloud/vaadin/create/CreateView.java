@@ -16,11 +16,12 @@ import cz.cesnet.cloud.occi.exception.AmbiguousIdentifierException;
 import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
+import cz.cesnet.cloud.vaadin.commons.PolledView;
 
 import java.net.URI;
 import java.util.Map;
 
-public class CreateView extends VerticalLayout implements View {
+public class CreateView extends VerticalLayout implements PolledView {
 	private static final String chooseURI = "http://localhost:8080/chooser/";
 
 	private EntityBuilder entityBuilder;
@@ -103,6 +104,11 @@ public class CreateView extends VerticalLayout implements View {
 					Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
 			System.out.println(e.getMessage());
 		}
+	}
 
+	@Override
+	public void pollMethod() {
+		//Do nothing
+		//This is here just to simplify the PollListener in GUOCCI
 	}
 }
