@@ -10,6 +10,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
@@ -24,6 +25,7 @@ import cz.cesnet.cloud.vaadin.storage.StorageView;
 public class GUOCCI extends UI {
 	private Navigator navigator;
 	private HorizontalLayout breadcrumbs;
+	private Registration pollListenerRegistration = null;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -55,7 +57,11 @@ public class GUOCCI extends UI {
 		navigator.addViewChangeListener(viewChangeEvent -> {
 			removeButtons();
 			PolledView newView = (PolledView) viewChangeEvent.getNewView();
-			addPollListener(pollEvent -> newView.pollMethod());
+
+			if (pollListenerRegistration != null) {
+				pollListenerRegistration.remove();
+			}
+			pollListenerRegistration = addPollListener(pollEvent -> newView.pollMethod());
 			return true;
 		});
 
