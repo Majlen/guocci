@@ -14,6 +14,7 @@ import cz.cesnet.cloud.occi.core.Mixin;
 import cz.cesnet.cloud.occi.core.Resource;
 import cz.cesnet.cloud.occi.exception.AmbiguousIdentifierException;
 import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
+import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 
 import java.net.URI;
@@ -56,6 +57,9 @@ public class CreateView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
+		GUOCCI guocci = (GUOCCI) getUI();
+		guocci.addButton("Create compute", "create/" + viewChangeEvent.getParameters());
+
 		title.clear();
 		os_tplLayout.removeAllComponents();
 		res_tplLayout.removeAllComponents();
@@ -91,14 +95,14 @@ public class CreateView extends VerticalLayout implements View {
 			if (!title.isEmpty()) {
 				computeResource.setTitle(title.getValue());
 			}
-			occi.create(computeResource);
+
+			String path = occi.create(computeResource).getPath();
+			getUI().getNavigator().navigateTo("compute/" + path.substring(path.lastIndexOf('/') + 1));
 		} catch (EntityBuildingException | CommunicationException | InvalidAttributeValueException e) {
 			new Notification("Exception occurred while creating compute.", e.getMessage(),
 					Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
 			System.out.println(e.getMessage());
 		}
 
-		//TODO: navigate to corresponding ComputeView
-		getUI().getNavigator().navigateTo("");
 	}
 }
