@@ -16,7 +16,6 @@ import java.util.List;
 public class ListView extends VerticalLayout implements View {
 	private static final String chooseURI = "http://localhost:8080/chooser/";
 
-	private OCCI occi;
 	private GridLayout list;
 
 	public ListView() {
@@ -34,8 +33,6 @@ public class ListView extends VerticalLayout implements View {
 
 		HorizontalLayout bar = new HorizontalLayout(create);
 
-		occi = OCCI.getOCCI();
-
 		addComponents(bar, list);
 	}
 
@@ -44,6 +41,7 @@ public class ListView extends VerticalLayout implements View {
 		list.removeAllComponents();
 
 		try {
+			OCCI occi = OCCI.getOCCI(getSession());
 			List <ComputeDAO> computes = occi.getComputes();
 
 			for (ComputeDAO c: computes) {

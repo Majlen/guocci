@@ -90,10 +90,10 @@ public class ComputeView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
-		OCCI occi = OCCI.getOCCI();
 		compute = null;
 		try {
-			compute = OCCI.getOCCI().getCompute(viewChangeEvent.getParameters());
+			OCCI occi = OCCI.getOCCI(getSession());
+			compute = occi.getCompute(viewChangeEvent.getParameters());
 		} catch (CommunicationException e) {
 			System.out.println(e.getMessage());
 		}

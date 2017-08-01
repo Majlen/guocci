@@ -57,7 +57,8 @@ public class StorageView extends VerticalLayout implements View {
 		storage = null;
 
 		try {
-			ComputeDAO parent = OCCI.getOCCI().getCompute(parser.getOtherValues().get("compute"));
+			final OCCI occi = OCCI.getOCCI(getSession());
+			ComputeDAO parent = occi.getCompute(parser.getOtherValues().get("compute"));
 			storage = parent.getStorage(parser.getID());
 
 			GUOCCI guocci = (GUOCCI) getUI();
@@ -68,7 +69,6 @@ public class StorageView extends VerticalLayout implements View {
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
-					OCCI occi = OCCI.getOCCI();
 					storage = occi.getCompute(parent.getResource().getId()).getStorage(parser.getID());
 					fillDetails(storage);
 				} catch (CommunicationException e) {

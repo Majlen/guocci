@@ -19,10 +19,12 @@ public class StorageDAO {
 
 	private Resource resource;
 	private Link link;
+	private OCCI occi;
 
-	public StorageDAO(Resource resource, Link link) {
+	public StorageDAO(Resource resource, Link link, OCCI occi) {
 		this.resource = resource;
 		this.link = link;
+		this.occi = occi;
 	}
 
 	public double getSize() {
@@ -88,12 +90,12 @@ public class StorageDAO {
 
 	public void online() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(STORAGE_ONLINE));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void offline() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(STORAGE_OFFLINE));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void setOptions(Map<String, String> attributes) throws InvalidAttributeValueException, CommunicationException {
@@ -101,6 +103,6 @@ public class StorageDAO {
 		attributes.forEach((attribute, value) -> resource.removeAttribute(attribute));
 
 		resource.addAttributes(attributes);
-		OCCI.getOCCI().update(resource);
+		occi.update(resource);
 	}
 }

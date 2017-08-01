@@ -58,7 +58,8 @@ public class NetworkView extends VerticalLayout implements View {
 		network = null;
 
 		try {
-			ComputeDAO parent = OCCI.getOCCI().getCompute(parser.getOtherValues().get("compute"));
+			final OCCI occi = OCCI.getOCCI(getSession());
+			ComputeDAO parent = occi.getCompute(parser.getOtherValues().get("compute"));
 			network = parent.getNetwork(parser.getID());
 
 			GUOCCI guocci = (GUOCCI) getUI();
@@ -69,7 +70,6 @@ public class NetworkView extends VerticalLayout implements View {
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
-					OCCI occi = OCCI.getOCCI();
 					network = occi.getCompute(parent.getResource().getId()).getNetwork(parser.getID());
 					fillDetails(network);
 				} catch (CommunicationException e) {

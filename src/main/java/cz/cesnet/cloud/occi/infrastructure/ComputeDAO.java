@@ -21,9 +21,11 @@ public class ComputeDAO {
 	public static final String COMPUTE_SUSPEND = COMPUTE_ACTION_SCHEMA + "#suspend";
 
 	private Resource resource;
+	private OCCI occi;
 
-	public ComputeDAO(Resource resource) {
+	public ComputeDAO(Resource resource, OCCI occi) {
 		this.resource = resource;
+		this.occi = occi;
 	}
 
 	public Architecture getArchitecture() {
@@ -95,7 +97,7 @@ public class ComputeDAO {
 
 		Set<Link> links = resource.getLinks(StorageLink.TERM_DEFAULT);
 		for (Link link: links) {
-			storages.add(OCCI.getOCCI().getStorage(link.getTarget(), link));
+			storages.add(occi.getStorage(link.getTarget(), link));
 		}
 
 		return storages;
@@ -119,7 +121,7 @@ public class ComputeDAO {
 
 		Set<Link> links = resource.getLinks(NetworkInterface.TERM_DEFAULT);
 		for (Link link: links) {
-			networks.add(OCCI.getOCCI().getNetwork(link.getTarget(), link));
+			networks.add(occi.getNetwork(link.getTarget(), link));
 		}
 
 		return networks;
@@ -139,26 +141,26 @@ public class ComputeDAO {
 
 	public void start() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(COMPUTE_START));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void stop() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(COMPUTE_STOP));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void suspend() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(COMPUTE_SUSPEND));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void restart() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(COMPUTE_RESTART));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void remove() throws CommunicationException {
-		OCCI.getOCCI().delete(URI.create(resource.getLocation()));
+		occi.delete(URI.create(resource.getLocation()));
 	}
 
 	public void setOptions(Map<String, String> attributes) throws InvalidAttributeValueException, CommunicationException {
@@ -166,6 +168,6 @@ public class ComputeDAO {
 		attributes.forEach((attribute, value) -> resource.removeAttribute(attribute));
 
 		resource.addAttributes(attributes);
-		OCCI.getOCCI().update(resource);
+		occi.update(resource);
 	}
 }

@@ -1,5 +1,6 @@
 package cz.cesnet.cloud.occi;
 
+import com.vaadin.server.VaadinSession;
 import cz.cesnet.cloud.occi.api.Client;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.api.http.HTTPClient;
@@ -18,17 +19,14 @@ public class OCCI {
 	private HTTPAuthentication auth;
 	private Model model;
 	private URI endpoint;
-	Client client;
+	private Client client;
 
-	private static OCCI occi;
+	public static OCCI getOCCI(VaadinSession session) throws CommunicationException {
+		OCCI occi = session.getAttribute(OCCI.class);
 
-	public static OCCI getOCCI() {
 		if (occi == null) {
-			try {
-				occi = new OCCI();
-			} catch (CommunicationException e) {
-				System.out.println(e.getMessage());
-			}
+			occi = new OCCI();
+			session.setAttribute(OCCI.class, occi);
 		}
 
 		return occi;
@@ -50,7 +48,7 @@ public class OCCI {
 		List<Entity> entities = client.describe(Compute.TERM_DEFAULT);
 		List<ComputeDAO> computes = new ArrayList<>(entities.size());
 		for (Entity e: entities) {
-			computes.add(new ComputeDAO((Resource)e));
+			computes.add(new ComputeDAO((Resource)e, this));
 		}
 
 		return computes;
@@ -62,7 +60,7 @@ public class OCCI {
 		}
 		List<Entity> list = client.describe(URI.create(id));
 
-		return new ComputeDAO((Resource)list.get(0));
+		return new ComputeDAO((Resource)list.get(0), this);
 	}
 
 	public IPNetworkDAO getNetwork(String id, Link link) throws CommunicationException {
@@ -71,7 +69,7 @@ public class OCCI {
 		}
 		List<Entity> list = client.describe(URI.create(id));
 
-		return new IPNetworkDAO((Resource)list.get(0), link);
+		return new IPNetworkDAO((Resource)list.get(0), link, this);
 
 	}
 
@@ -81,7 +79,7 @@ public class OCCI {
 		}
 		List<Entity> list = client.describe(URI.create(id));
 
-		return new StorageDAO((Resource)list.get(0), link);
+		return new StorageDAO((Resource)list.get(0), link, this);
 
 	}
 

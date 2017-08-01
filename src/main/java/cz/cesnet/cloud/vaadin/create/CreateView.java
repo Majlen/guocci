@@ -67,10 +67,10 @@ public class CreateView extends VerticalLayout implements View {
 		ParameterParser parser = new ParameterParser(viewChangeEvent.getParameters(), false);
 		Map<String, String> parameters = parser.getOtherValues();
 
-		OCCI occi = OCCI.getOCCI();
-		entityBuilder = new EntityBuilder(occi.getModel());
-
 		try {
+			OCCI occi = OCCI.getOCCI(getSession());
+			entityBuilder = new EntityBuilder(occi.getModel());
+
 			System.out.println("Adding mixin os_tpl with parameter " + parameters.get("image"));
 			os_tpl = occi.getMixin(URI.create(parameters.get("image")));
 			System.out.println(os_tpl);
@@ -80,15 +80,15 @@ public class CreateView extends VerticalLayout implements View {
 			res_tpl = occi.getMixin(URI.create(parameters.get("flavour")));
 			System.out.println(res_tpl);
 			res_tplLayout.addComponent(new Label(res_tpl.getTitle()));
-		} catch (AmbiguousIdentifierException e) {
+		} catch (AmbiguousIdentifierException | CommunicationException e) {
 			System.out.println(e.getMessage());
 		}
 
 	}
 
 	private void createCompute() {
-		OCCI occi = OCCI.getOCCI();
 		try {
+			OCCI occi = OCCI.getOCCI(getSession());
 			Resource computeResource = entityBuilder.getResource("compute");
 			computeResource.addMixin(os_tpl);
 			computeResource.addMixin(res_tpl);

@@ -19,10 +19,12 @@ public class IPNetworkDAO {
 
 	private Resource resource;
 	private Link link;
+	private OCCI occi;
 
-	public IPNetworkDAO(Resource resource, Link link) {
+	public IPNetworkDAO(Resource resource, Link link, OCCI occi) {
 		this.resource = resource;
 		this.link = link;
+		this.occi = occi;
 	}
 
 	public String getLabel() {
@@ -141,12 +143,12 @@ public class IPNetworkDAO {
 
 	public void up() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(NETWORK_UP));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void down() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(NETWORK_DOWN));
-		OCCI.getOCCI().performAction(URI.create(resource.getLocation()), action);
+		occi.performAction(URI.create(resource.getLocation()), action);
 	}
 
 	public void setOptions(Map<String, String> attributes) throws InvalidAttributeValueException, CommunicationException {
@@ -154,6 +156,6 @@ public class IPNetworkDAO {
 		attributes.forEach((attribute, value) -> resource.removeAttribute(attribute));
 
 		resource.addAttributes(attributes);
-		OCCI.getOCCI().update(resource);
+		occi.update(resource);
 	}
 }
