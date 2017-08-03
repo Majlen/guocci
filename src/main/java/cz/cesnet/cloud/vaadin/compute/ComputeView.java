@@ -10,6 +10,7 @@ import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
+import cz.cesnet.cloud.vaadin.commons.DeleteWindow;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 
 import java.util.List;
@@ -69,13 +70,15 @@ public class ComputeView extends VerticalLayout implements PolledView {
 		});
 
 		remove.addClickListener(clickEvent -> {
-			try {
-				compute.remove();
-				//TODO: Warning window?
-				getUI().getNavigator().navigateTo("");
-			} catch (CommunicationException e) {
-				System.out.println(e.getMessage());
+			getUI().addWindow(new DeleteWindow("", () -> {
+				try {
+					compute.remove();
+				} catch (CommunicationException e) {
+					//TODO: Notification
+					System.out.println(e.getMessage());
+				}
 			}
+			));
 		});
 
 		HorizontalLayout bar = new HorizontalLayout(start, stop, restart, suspend, remove);
