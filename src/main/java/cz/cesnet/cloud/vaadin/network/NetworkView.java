@@ -1,7 +1,6 @@
 package cz.cesnet.cloud.vaadin.network;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -12,15 +11,14 @@ import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
-import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
-import cz.cesnet.cloud.vaadin.compute.ComputeView;
 
 public class NetworkView extends VerticalLayout implements PolledView {
 	private IPNetworkDAO network;
 	private NetworkDetail networkDetail;
+	private ComputeDAO parentResource;
 
 	private Button up;
 	private Button down;
@@ -60,18 +58,18 @@ public class NetworkView extends VerticalLayout implements PolledView {
 
 		try {
 			final OCCI occi = OCCI.getOCCI(getSession());
-			ComputeDAO parent = occi.getCompute(parser.getOtherValues().get("compute"));
-			network = parent.getNetwork(parser.getID());
+			parentResource = occi.getCompute(parser.getOtherValues().get("compute"));
+			network = parentResource.getNetwork(parser.getID());
 
 			GUOCCI guocci = (GUOCCI) getUI();
-			guocci.addButton(parent.getResource().getTitle(), "compute/" + parent.getResource().getId());
+			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId());
 			guocci.addButton(network.getResource().getTitle(), "network/" + viewChangeEvent.getParameters());
 
 			fillDetails(network);
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
-					network = occi.getCompute(parent.getResource().getId()).getNetwork(parser.getID());
+					network = occi.getCompute(parentResource.getResource().getId()).getNetwork(parser.getID());
 					fillDetails(network);
 				} catch (CommunicationException e) {
 					System.out.println(e.getMessage());
@@ -89,6 +87,13 @@ public class NetworkView extends VerticalLayout implements PolledView {
 
 	@Override
 	public void pollMethod() {
-		//TODO
+		try {
+			OCCI occi = OCCI.getOCCI(getSession());
+			parentResource = occi.getCompute(parentResource.getResource().getLocation());
+			network = parentResource.getNetwork(network.getResource().getId());
+			fillDetails(network);
+		} catch (CommunicationException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }

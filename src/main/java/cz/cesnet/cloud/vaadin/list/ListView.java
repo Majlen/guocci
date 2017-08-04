@@ -74,6 +74,6 @@ public class ListView extends VerticalLayout implements PolledView {
 
 	@Override
 	public void pollMethod() {
-		//TODO
+		enter(null);
 	}
 }

@@ -1,7 +1,6 @@
 package cz.cesnet.cloud.vaadin.storage;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -15,11 +14,11 @@ import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
-import cz.cesnet.cloud.vaadin.compute.ComputeView;
 
 public class StorageView extends VerticalLayout implements PolledView {
 	private StorageDAO storage;
 	private StorageDetail storageDetail;
+	private ComputeDAO parentResource;
 
 	private Button online;
 	private Button offline;
@@ -59,18 +58,18 @@ public class StorageView extends VerticalLayout implements PolledView {
 
 		try {
 			final OCCI occi = OCCI.getOCCI(getSession());
-			ComputeDAO parent = occi.getCompute(parser.getOtherValues().get("compute"));
-			storage = parent.getStorage(parser.getID());
+			parentResource = occi.getCompute(parser.getOtherValues().get("compute"));
+			storage = parentResource.getStorage(parser.getID());
 
 			GUOCCI guocci = (GUOCCI) getUI();
-			guocci.addButton(parent.getResource().getTitle(), "compute/" + parent.getResource().getId());
+			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId());
 			guocci.addButton(storage.getResource().getTitle(), "storage/" + viewChangeEvent.getParameters());
 
 			fillDetails(storage);
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
-					storage = occi.getCompute(parent.getResource().getId()).getStorage(parser.getID());
+					storage = occi.getCompute(parentResource.getResource().getId()).getStorage(parser.getID());
 					fillDetails(storage);
 				} catch (CommunicationException e) {
 					System.out.println(e.getMessage());
@@ -88,6 +87,13 @@ public class StorageView extends VerticalLayout implements PolledView {
 
 	@Override
 	public void pollMethod() {
-		//TODO
+		try {
+			OCCI occi = OCCI.getOCCI(getSession());
+			parentResource = occi.getCompute(parentResource.getResource().getLocation());
+			storage = parentResource.getStorage(storage.getResource().getId());
+			fillDetails(storage);
+		} catch (CommunicationException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
