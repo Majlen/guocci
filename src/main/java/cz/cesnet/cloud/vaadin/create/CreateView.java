@@ -15,6 +15,7 @@ import cz.cesnet.cloud.occi.core.Resource;
 import cz.cesnet.cloud.occi.exception.AmbiguousIdentifierException;
 import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.vaadin.GUOCCI;
+import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 
@@ -82,6 +83,7 @@ public class CreateView extends VerticalLayout implements PolledView {
 			System.out.println(res_tpl);
 			res_tplLayout.addComponent(new Label(res_tpl.getTitle()));
 		} catch (AmbiguousIdentifierException | CommunicationException e) {
+			Notify.errNotify("Exception occured while loading details about compute.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 
@@ -100,8 +102,7 @@ public class CreateView extends VerticalLayout implements PolledView {
 			String path = occi.create(computeResource).getPath();
 			getUI().getNavigator().navigateTo("compute/" + path.substring(path.lastIndexOf('/') + 1));
 		} catch (EntityBuildingException | CommunicationException | InvalidAttributeValueException e) {
-			new Notification("Exception occurred while creating compute.", e.getMessage(),
-					Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+			Notify.errNotify("Exception occured while creating compute.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 	}

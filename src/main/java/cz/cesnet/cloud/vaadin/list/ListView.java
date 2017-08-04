@@ -2,12 +2,12 @@ package cz.cesnet.cloud.vaadin.list;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
+import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 
 import java.util.List;
@@ -48,8 +48,7 @@ public class ListView extends VerticalLayout implements PolledView {
 				list.addComponent(detail);
 			}
 		} catch (CommunicationException e) {
-			new Notification("Exception occurred while listing available computes.", e.getMessage(),
-					Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+			Notify.errNotify("Exception occurred while listing available computes.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 	}

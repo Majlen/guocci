@@ -12,6 +12,7 @@ import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
+import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 
@@ -33,6 +34,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			try {
 				storage.online();
 			} catch (CommunicationException e) {
+				Notify.errNotify("Exception occured while taking storage online.", e.getMessage());
 				System.out.println(e.getMessage());
 			}
 		});
@@ -41,6 +43,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			try {
 				storage.offline();
 			} catch (CommunicationException e) {
+				Notify.errNotify("Exception occured while taking storage offline.", e.getMessage());
 				System.out.println(e.getMessage());
 			}
 		});
@@ -72,10 +75,12 @@ public class StorageView extends VerticalLayout implements PolledView {
 					storage = occi.getCompute(parentResource.getResource().getId()).getStorage(parser.getID());
 					fillDetails(storage);
 				} catch (CommunicationException e) {
+					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 					System.out.println(e.getMessage());
 				}
 			});
 		} catch (CommunicationException e) {
+			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 
@@ -93,6 +98,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			storage = parentResource.getStorage(storage.getResource().getId());
 			fillDetails(storage);
 		} catch (CommunicationException e) {
+			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 	}

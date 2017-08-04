@@ -11,6 +11,7 @@ import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.Compute;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
+import cz.cesnet.cloud.vaadin.commons.Notify;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class ComputeDetail extends FormLayout {
 		try {
 			compute.setOptions(attrMap);
 		} catch (CommunicationException | InvalidAttributeValueException e) {
-			new Notification("Failed to set attributes!", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+			Notify.errNotify("Failed to set attributes.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 	}

@@ -12,6 +12,7 @@ import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
+import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 
@@ -33,6 +34,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			try {
 				network.up();
 			} catch (CommunicationException e) {
+				Notify.errNotify("Exception occured while bringing interface up.", e.getMessage());
 				System.out.println(e.getMessage());
 			}
 		});
@@ -41,6 +43,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			try {
 				network.down();
 			} catch (CommunicationException e) {
+				Notify.errNotify("Exception occured while bringing interface down.", e.getMessage());
 				System.out.println(e.getMessage());
 			}
 		});
@@ -72,10 +75,12 @@ public class NetworkView extends VerticalLayout implements PolledView {
 					network = occi.getCompute(parentResource.getResource().getId()).getNetwork(parser.getID());
 					fillDetails(network);
 				} catch (CommunicationException e) {
+					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 					System.out.println(e.getMessage());
 				}
 			});
 		} catch (CommunicationException e) {
+			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 
@@ -93,6 +98,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			network = parentResource.getNetwork(network.getResource().getId());
 			fillDetails(network);
 		} catch (CommunicationException e) {
+			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());
 		}
 	}
