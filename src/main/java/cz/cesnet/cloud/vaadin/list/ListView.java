@@ -1,10 +1,8 @@
 package cz.cesnet.cloud.vaadin.list;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.OCCI;
@@ -46,24 +44,8 @@ public class ListView extends VerticalLayout implements PolledView {
 			List <ComputeDAO> computes = occi.getComputes();
 
 			for (ComputeDAO c: computes) {
-				VerticalLayout layout = new VerticalLayout();
-				Panel panel = new Panel(c.getResource().getTitle(), layout);
-				panel.setId(c.getResource().getId());
-
-				layout.addComponent(new Label("Hostname: " + c.getHostname()));
-				layout.addComponent(new Label("Cores: " + c.getCores()));
-				layout.addComponent(new Label("Memory: " + c.getMemory()));
-				layout.addComponent(new Label("Architecture: " + c.getArchitecture()));
-				layout.addComponent(new Label("Speed: " + c.getSpeed()));
-				layout.addComponent(new Label("State: " + c.getState()));
-
-				panel.addClickListener(clickEvent -> {
-					if (clickEvent.getButton() == MouseEventDetails.MouseButton.LEFT) {
-						Panel p = (Panel)clickEvent.getComponent();
-						getUI().getNavigator().navigateTo("compute/" + p.getId());
-					}
-				});
-				list.addComponent(panel);
+				ComputeDetail detail = new ComputeDetail(c);
+				list.addComponent(detail);
 			}
 		} catch (CommunicationException e) {
 			new Notification("Exception occurred while listing available computes.", e.getMessage(),
