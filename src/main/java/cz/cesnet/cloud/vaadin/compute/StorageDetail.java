@@ -1,9 +1,8 @@
 package cz.cesnet.cloud.vaadin.compute;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
@@ -29,11 +28,10 @@ public class StorageDetail extends Panel {
 		setContent(layout);
 		setCaption("Storage: " + storage.getResource().getId());
 
-		addClickListener(clickEvent -> {
-			if (clickEvent.getButton() == MouseEventDetails.MouseButton.LEFT) {
-				getUI().getNavigator().navigateTo("storage/" + storage.getResource().getId() +
-						"&compute/" + compute.getResource().getId());
-			}
+		Button detail = new Button("Detail", VaadinIcons.ELLIPSIS_DOTS_V);
+		detail.addClickListener(clickEvent -> {
+			getUI().getNavigator().navigateTo("storage/" + storage.getResource().getId() +
+					"&compute/" + compute.getResource().getId());
 		});
 	}
 
