@@ -2,7 +2,6 @@ package cz.cesnet.cloud.vaadin.compute;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.OCCI;
@@ -27,6 +26,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 	private Button restart;
 	private Button suspend;
 	private Button remove;
+	private Button resize;
 
 	public ComputeView() {
 		start = new Button("Start", VaadinIcons.PLAY);
@@ -38,6 +38,8 @@ public class ComputeView extends VerticalLayout implements PolledView {
 		suspend = new Button("Suspend", VaadinIcons.PAUSE);
 		remove = new Button("Remove", VaadinIcons.TRASH);
 		remove.addStyleName(ValoTheme.BUTTON_DANGER);
+		resize = new Button("Resize", VaadinIcons.RESIZE_V);
+		resize.setEnabled(false);
 
 		start.addClickListener(clickEvent -> {
 			try {
@@ -75,7 +77,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 			}
 		});
 
-		remove.addClickListener(clickEvent -> {
+		remove.addClickListener(clickEvent ->
 			getUI().addWindow(new DeleteWindow("", () -> {
 				try {
 					compute.remove();
@@ -84,10 +86,14 @@ public class ComputeView extends VerticalLayout implements PolledView {
 					System.out.println(e.getMessage());
 				}
 			}
-			));
+			))
+		);
+
+		resize.addClickListener(clickEvent -> {
+			getUI().addWindow(new ResizeWindow(compute));
 		});
 
-		HorizontalLayout bar = new HorizontalLayout(start, stop, restart, suspend, remove);
+		HorizontalLayout bar = new HorizontalLayout(start, stop, restart, suspend, resize, remove);
 
 		computeDetail = new ComputeDetail();
 		linksDetail = new VerticalLayout();

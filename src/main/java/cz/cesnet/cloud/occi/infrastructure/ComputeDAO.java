@@ -1,5 +1,6 @@
 package cz.cesnet.cloud.occi.infrastructure;
 
+import cz.cesnet.cloud.occi.Model;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.core.*;
@@ -161,6 +162,30 @@ public class ComputeDAO {
 
 	public void remove() throws CommunicationException {
 		occi.delete(URI.create(resource.getLocation()));
+	}
+
+	public void setOptionMixin(Mixin mixin, Mixin parentMixin) throws CommunicationException {
+		Mixin toRemove = null;
+		Set<Mixin> mixins = resource.getMixins();
+		Model model = occi.getModel();
+
+		for (Mixin m: mixins) {
+			Mixin fromModel = model.getMixin(m.getIdentifier());
+			for (Mixin n: fromModel.getRelations()) {
+				if (n.getTerm().equals(parentMixin.getTerm())) {
+					toRemove = n;
+					break;
+				}
+			}
+			if (toRemove != null) {
+				break;
+			}
+		}
+
+
+		resource.removeMixin(toRemove);
+		resource.addMixin(mixin);
+		occi.update(resource);
 	}
 
 	public void setOptions(Map<String, String> attributes) throws InvalidAttributeValueException, CommunicationException {

@@ -13,7 +13,9 @@ import cz.cesnet.cloud.occi.infrastructure.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class OCCI {
 	private HTTPAuthentication auth;
@@ -86,6 +88,23 @@ public class OCCI {
 
 		return new StorageDAO((Resource)list.get(0), link, this);
 
+	}
+
+	public Set<ResourceTemplateMixin> getResTpls() {
+		Set<Mixin> mixins = client.getModel().getMixins();
+
+		Set<ResourceTemplateMixin> resTpls = new HashSet<>();
+
+		for (Mixin m: mixins) {
+			for (Mixin n : m.getRelations()) {
+				if (n.getTerm().equals("resource_tpl")) {
+					ResourceTemplateMixin resTpl = new ResourceTemplateMixin(m, n);
+					resTpls.add(resTpl);
+				}
+			}
+		}
+
+		return resTpls;
 	}
 
 	public void performAction(URI identifier, ActionInstance action) throws CommunicationException {
