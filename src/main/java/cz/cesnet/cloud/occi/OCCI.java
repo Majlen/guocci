@@ -22,11 +22,16 @@ public class OCCI {
 	private Client client;
 
 	public static OCCI getOCCI(VaadinSession session) throws CommunicationException {
-		OCCI occi = session.getAttribute(OCCI.class);
+		OCCI occi = null;
+		if (session != null) {
+			occi = session.getAttribute(OCCI.class);
+		}
 
 		if (occi == null) {
 			occi = new OCCI();
-			session.setAttribute(OCCI.class, occi);
+			if (session != null) {
+				session.setAttribute(OCCI.class, occi);
+			}
 		}
 
 		return occi;
