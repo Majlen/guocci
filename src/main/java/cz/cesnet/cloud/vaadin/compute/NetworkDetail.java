@@ -42,11 +42,9 @@ public class NetworkDetail extends Panel {
 			getUI().getNavigator().navigateTo("network/" + network.getResource().getId() +
 					"&compute/" + compute.getResource().getId());
 		});
-	}
 
-	public void refresh(IPNetworkDAO network) {
-		this.network = network;
-		setValues();
+		layout.addComponent(detail);
+		layout.setComponentAlignment(detail, Alignment.MIDDLE_RIGHT);
 	}
 
 	private void setValues() {

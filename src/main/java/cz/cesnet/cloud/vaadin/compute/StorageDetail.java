@@ -33,11 +33,9 @@ public class StorageDetail extends Panel {
 			getUI().getNavigator().navigateTo("storage/" + storage.getResource().getId() +
 					"&compute/" + compute.getResource().getId());
 		});
-	}
 
-	public void refresh(StorageDAO storage) {
-		this.storage = storage;
-		setValues();
+		layout.addComponent(detail);
+		layout.setComponentAlignment(detail, Alignment.MIDDLE_RIGHT);
 	}
 
 	private void setValues() {

@@ -25,9 +25,9 @@ public class StorageView extends VerticalLayout implements PolledView {
 	private Button offline;
 
 	public StorageView() {
-		online = new Button("Start", VaadinIcons.PLAY);
+		online = new Button("Online", VaadinIcons.ARROW_UP);
 		online.addStyleName(ValoTheme.BUTTON_FRIENDLY);
-		offline = new Button("Stop", VaadinIcons.STOP);
+		offline = new Button("Offline", VaadinIcons.ARROW_DOWN);
 		offline.addStyleName(ValoTheme.BUTTON_DANGER);
 
 		online.addClickListener(clickEvent -> {
@@ -68,12 +68,12 @@ public class StorageView extends VerticalLayout implements PolledView {
 			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId());
 			guocci.addButton(storage.getResource().getTitle(), "storage/" + viewChangeEvent.getParameters());
 
-			fillDetails(storage);
+			fillDetails();
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
 					storage = occi.getCompute(parentResource.getResource().getId()).getStorage(parser.getID());
-					fillDetails(storage);
+					fillDetails();
 				} catch (CommunicationException e) {
 					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 					System.out.println(e.getMessage());
@@ -86,8 +86,14 @@ public class StorageView extends VerticalLayout implements PolledView {
 
 	}
 
-	private void fillDetails(StorageDAO storage) {
+	private void fillDetails() {
 		storageDetail.refresh(storage);
+		setButtons();
+	}
+
+	private void setButtons() {
+		online.setEnabled(storage.getResource().containsAction(StorageDAO.STORAGE_ONLINE));
+		offline.setEnabled(storage.getResource().containsAction(StorageDAO.STORAGE_OFFLINE));
 	}
 
 	@Override
@@ -96,7 +102,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			OCCI occi = OCCI.getOCCI(getSession());
 			parentResource = occi.getCompute(parentResource.getResource().getLocation());
 			storage = parentResource.getStorage(storage.getResource().getId());
-			fillDetails(storage);
+			fillDetails();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());

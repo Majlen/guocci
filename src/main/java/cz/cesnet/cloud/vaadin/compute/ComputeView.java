@@ -111,7 +111,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 		guocci.addButton(compute.getResource().getTitle(), "compute/" + viewChangeEvent.getParameters());
 
 		try {
-			fillEverything(compute);
+			fillEverything();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Exception occured while getting compute detail.", e.getMessage());
 			System.out.println(e.getMessage());
@@ -119,17 +119,17 @@ public class ComputeView extends VerticalLayout implements PolledView {
 
 	}
 
-	private void fillEverything(ComputeDAO compute) throws CommunicationException {
+	private void fillEverything() throws CommunicationException {
 		linksDetail.removeAllComponents();
 
-		fillCompute(compute);
+		fillCompute();
 		fillStorages(compute.getStorages());
 		fillNetworks(compute.getNetworks());
 	}
 
-	private void fillCompute(ComputeDAO compute) {
+	private void fillCompute() {
 		computeDetail.refresh(compute);
-		setButtons(compute);
+		setButtons();
 	}
 
 	private void fillStorages(List<StorageDAO> storages) {
@@ -144,7 +144,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 		}
 	}
 
-	private void setButtons(ComputeDAO compute) {
+	private void setButtons() {
 		start.setEnabled(compute.getResource().containsAction(ComputeDAO.COMPUTE_START));
 		stop.setEnabled(compute.getResource().containsAction(ComputeDAO.COMPUTE_STOP));
 		restart.setEnabled(compute.getResource().containsAction(ComputeDAO.COMPUTE_RESTART));
@@ -159,7 +159,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 	public void pollMethod() {
 		try {
 			compute = OCCI.getOCCI(getSession()).getCompute(compute.getResource().getLocation());
-			fillCompute(compute);
+			fillCompute();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Exception occured while getting compute detail.", e.getMessage());
 			System.out.println(e.getMessage());

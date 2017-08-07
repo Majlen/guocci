@@ -68,12 +68,12 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId());
 			guocci.addButton(network.getResource().getTitle(), "network/" + viewChangeEvent.getParameters());
 
-			fillDetails(network);
+			fillDetails();
 
 			UI.getCurrent().addPollListener(pollEvent -> {
 				try {
 					network = occi.getCompute(parentResource.getResource().getId()).getNetwork(parser.getID());
-					fillDetails(network);
+					fillDetails();
 				} catch (CommunicationException e) {
 					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 					System.out.println(e.getMessage());
@@ -86,8 +86,14 @@ public class NetworkView extends VerticalLayout implements PolledView {
 
 	}
 
-	private void fillDetails(IPNetworkDAO network) {
+	private void fillDetails() {
 		networkDetail.refresh(network);
+		setButtons();
+	}
+
+	private void setButtons() {
+		up.setEnabled(network.getResource().containsAction(IPNetworkDAO.NETWORK_UP));
+		down.setEnabled(network.getResource().containsAction(IPNetworkDAO.NETWORK_DOWN));
 	}
 
 	@Override
@@ -96,7 +102,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			OCCI occi = OCCI.getOCCI(getSession());
 			parentResource = occi.getCompute(parentResource.getResource().getLocation());
 			network = parentResource.getNetwork(network.getResource().getId());
-			fillDetails(network);
+			fillDetails();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			System.out.println(e.getMessage());
