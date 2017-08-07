@@ -27,11 +27,8 @@ public class NetworkDetail extends FormLayout {
 	private Button apply;
 
 	public NetworkDetail() {
-		this(false);
-	}
-
-	public NetworkDetail(boolean create) {
-		vlan = new TextField("Size");
+		super();
+		vlan = new TextField("VLAN");
 		label = new TextField("Label");
 		address = new TextField("Address");
 		gateway = new TextField("Gateway");
@@ -39,16 +36,11 @@ public class NetworkDetail extends FormLayout {
 		state = new TextField("State");
 		state.setReadOnly(true);
 
-		if (!create) {
-			apply = new Button("Apply", VaadinIcons.CHECK);
-			apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			apply.addClickListener(clickEvent -> updateNetwork());
+		apply = new Button("Apply", VaadinIcons.CHECK);
+		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		apply.addClickListener(clickEvent -> updateNetwork());
 
-			addComponents(vlan, state, apply);
-		} else {
-			addComponents(vlan);
-		}
-
+		addComponents(label, address, gateway, vlan, allocation, state, apply);
 	}
 
 	public void refresh(IPNetworkDAO network) {

@@ -24,23 +24,16 @@ public class StorageDetail extends FormLayout {
 	private Button apply;
 
 	public StorageDetail() {
-		this(false);
-	}
-
-	public StorageDetail(boolean create) {
+		super();
 		size = new TextField("Size");
 		state = new TextField("State");
 		state.setReadOnly(true);
 
-		if (!create) {
-			apply = new Button("Apply", VaadinIcons.CHECK);
-			apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			apply.addClickListener(clickEvent -> updateStorage());
+		apply = new Button("Apply", VaadinIcons.CHECK);
+		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		apply.addClickListener(clickEvent -> updateStorage());
 
-			addComponents(size, state, apply);
-		} else {
-			addComponents(size);
-		}
+		addComponents(size, state, apply);
 	}
 
 	public void refresh(StorageDAO storage) {

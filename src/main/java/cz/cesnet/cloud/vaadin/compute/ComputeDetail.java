@@ -27,10 +27,7 @@ public class ComputeDetail extends FormLayout {
 	private Button apply;
 
 	public ComputeDetail() {
-		this(false);
-	}
-
-	public ComputeDetail(boolean create) {
+		super();
 		cores = new TextField("Cores");
 		hostname = new TextField("Hostname");
 		speed = new TextField("Speed");
@@ -38,15 +35,11 @@ public class ComputeDetail extends FormLayout {
 		state = new TextField("State");
 		state.setReadOnly(true);
 
-		if (!create) {
-			apply = new Button("Apply", VaadinIcons.CHECK);
-			apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			apply.addClickListener(clickEvent -> updateCompute());
+		apply = new Button("Apply", VaadinIcons.CHECK);
+		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		apply.addClickListener(clickEvent -> updateCompute());
 
-			addComponents(cores, hostname, speed, memory, state, apply);
-		} else {
-			addComponents(cores, hostname, speed, memory);
-		}
+		addComponents(cores, hostname, speed, memory, state, apply);
 
 	}
 
