@@ -13,10 +13,14 @@ import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.DeleteWindow;
 import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ComputeView extends VerticalLayout implements PolledView {
+	private static final Logger logger = LoggerFactory.getLogger(ComputeView.class);
+
 	private ComputeDAO compute;
 	private ComputeDetail computeDetail;
 	private VerticalLayout linksDetail;
@@ -46,7 +50,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 				compute.start();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while starting compute.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot start compute.", e);
 			}
 		});
 
@@ -55,7 +59,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 				compute.stop();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while stopping compute.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot stop compute.", e);
 			}
 		});
 
@@ -64,7 +68,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 				compute.restart();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while restarting compute.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot start compute.", e);
 			}
 		});
 
@@ -73,7 +77,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 				compute.suspend();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while suspending compute.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot suspend compute.", e);
 			}
 		});
 
@@ -83,7 +87,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 					compute.remove();
 				} catch (CommunicationException e) {
 					Notify.errNotify("Exception occured while removing compute.", e.getMessage());
-					System.out.println(e.getMessage());
+					logger.error("Cannot remove compute.", e);
 				}
 			}
 			))
@@ -110,7 +114,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 			OCCI occi = OCCI.getOCCI(getSession());
 			compute = occi.getCompute(viewChangeEvent.getParameters());
 		} catch (CommunicationException e) {
-			System.out.println(e.getMessage());
+			logger.error("Cannot get compute.", e);
 		}
 
 		GUOCCI guocci = (GUOCCI) getUI();
@@ -120,7 +124,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 			fillEverything();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Exception occured while getting compute detail.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get compute detail.", e);
 		}
 
 	}
@@ -168,7 +172,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 			fillCompute();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Exception occured while getting compute detail.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get compute detail.", e);
 		}
 	}
 }

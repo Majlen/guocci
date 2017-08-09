@@ -15,8 +15,12 @@ import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NetworkView extends VerticalLayout implements PolledView {
+	private static final Logger logger = LoggerFactory.getLogger(NetworkView.class);
+
 	private IPNetworkDAO network;
 	private NetworkDetail networkDetail;
 	private ComputeDAO parentResource;
@@ -35,7 +39,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 				network.up();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while bringing interface up.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot bring interface up.", e);
 			}
 		});
 
@@ -44,7 +48,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 				network.down();
 			} catch (CommunicationException e) {
 				Notify.errNotify("Exception occured while bringing interface down.", e.getMessage());
-				System.out.println(e.getMessage());
+				logger.error("Cannot bring interface down.", e);
 			}
 		});
 
@@ -76,12 +80,12 @@ public class NetworkView extends VerticalLayout implements PolledView {
 					fillDetails();
 				} catch (CommunicationException e) {
 					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-					System.out.println(e.getMessage());
+					logger.error("Cannot get network detail.", e);
 				}
 			});
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get network detail.", e);
 		}
 
 	}
@@ -105,7 +109,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			fillDetails();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get network detail.", e);
 		}
 	}
 }

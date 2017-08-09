@@ -15,8 +15,13 @@ import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageView extends VerticalLayout implements PolledView {
+	private static final Logger logger = LoggerFactory.getLogger(StorageView.class);
+
+
 	private StorageDAO storage;
 	private StorageDetail storageDetail;
 	private ComputeDAO parentResource;
@@ -34,8 +39,8 @@ public class StorageView extends VerticalLayout implements PolledView {
 			try {
 				storage.online();
 			} catch (CommunicationException e) {
-				Notify.errNotify("Exception occured while taking storage online.", e.getMessage());
-				System.out.println(e.getMessage());
+				Notify.errNotify("Exception occured while bringing storage online.", e.getMessage());
+				logger.error("Cannot bring storage online.", e);
 			}
 		});
 
@@ -43,8 +48,8 @@ public class StorageView extends VerticalLayout implements PolledView {
 			try {
 				storage.offline();
 			} catch (CommunicationException e) {
-				Notify.errNotify("Exception occured while taking storage offline.", e.getMessage());
-				System.out.println(e.getMessage());
+				Notify.errNotify("Exception occured while bringing storage offline.", e.getMessage());
+				logger.error("Cannot bring storage offline.", e);
 			}
 		});
 
@@ -76,12 +81,12 @@ public class StorageView extends VerticalLayout implements PolledView {
 					fillDetails();
 				} catch (CommunicationException e) {
 					Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-					System.out.println(e.getMessage());
+					logger.error("Cannot get storage detail.", e);
 				}
 			});
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get storage detail.", e);
 		}
 
 	}
@@ -105,7 +110,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			fillDetails();
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot get storage detail.", e);
 		}
 	}
 }

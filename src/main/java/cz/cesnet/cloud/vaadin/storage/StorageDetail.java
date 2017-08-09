@@ -12,11 +12,14 @@ import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.Storage;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class StorageDetail extends FormLayout {
+	private static final Logger logger = LoggerFactory.getLogger(StorageDetail.class);
 	private StorageDAO storage;
 
 	private TextField size;
@@ -57,7 +60,7 @@ public class StorageDetail extends FormLayout {
 			storage.setOptions(attrMap);
 		} catch (CommunicationException | InvalidAttributeValueException e) {
 			Notify.errNotify("Failed to set attributes.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Failed to set attributes to storage.", e);
 		}
 	}
 }

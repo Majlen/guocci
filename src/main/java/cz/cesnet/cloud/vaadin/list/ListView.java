@@ -9,10 +9,14 @@ import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ListView extends VerticalLayout implements PolledView {
+	private static final Logger logger = LoggerFactory.getLogger(ListView.class);
+
 	private static final String chooseURI = "http://localhost:8080/chooser/";
 
 	private GridLayout list;
@@ -49,7 +53,7 @@ public class ListView extends VerticalLayout implements PolledView {
 			}
 		} catch (CommunicationException e) {
 			Notify.errNotify("Exception occurred while listing available computes.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Error listing user's computes.", e);
 		}
 	}
 

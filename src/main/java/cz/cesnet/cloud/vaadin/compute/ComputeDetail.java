@@ -12,11 +12,15 @@ import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.Compute;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ComputeDetail extends FormLayout {
+	private static final Logger logger = LoggerFactory.getLogger(ComputeDetail.class);
+
 	private ComputeDAO compute;
 
 	private TextField cores;
@@ -40,7 +44,6 @@ public class ComputeDetail extends FormLayout {
 		apply.addClickListener(clickEvent -> updateCompute());
 
 		addComponents(cores, hostname, speed, memory, state, apply);
-
 	}
 
 	public void refresh(ComputeDAO compute) {
@@ -76,7 +79,7 @@ public class ComputeDetail extends FormLayout {
 			compute.setOptions(attrMap);
 		} catch (CommunicationException | InvalidAttributeValueException e) {
 			Notify.errNotify("Failed to set attributes.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Failed to set attributes to compute.", e);
 		}
 	}
 }

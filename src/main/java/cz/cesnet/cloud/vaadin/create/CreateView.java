@@ -18,11 +18,15 @@ import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.Notify;
 import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Map;
 
 public class CreateView extends VerticalLayout implements PolledView {
+	private static final Logger logger = LoggerFactory.getLogger(CreateView.class);
+
 	private static final String chooseURI = "http://localhost:8080/chooser/";
 
 	private EntityBuilder entityBuilder;
@@ -73,18 +77,18 @@ public class CreateView extends VerticalLayout implements PolledView {
 			OCCI occi = OCCI.getOCCI(getSession());
 			entityBuilder = new EntityBuilder(occi.getModel());
 
-			System.out.println("Adding mixin os_tpl with parameter " + parameters.get("image"));
+			logger.debug("Adding mixin os_tpl with parameter {}.", parameters.get("image"));
 			os_tpl = occi.getMixin(URI.create(parameters.get("image")));
-			System.out.println(os_tpl);
+			logger.trace(os_tpl.toString());
 			os_tplLayout.addComponent(new Label(os_tpl.getTitle()));
 
-			System.out.println("Adding mixin res_tpl with parameter " + parameters.get("flavour"));
+			logger.debug("Adding mixin res_tpl with parameter {}.", parameters.get("flavour"));
 			res_tpl = occi.getMixin(URI.create(parameters.get("flavour")));
-			System.out.println(res_tpl);
+			logger.trace(res_tpl.toString());
 			res_tplLayout.addComponent(new Label(res_tpl.getTitle()));
 		} catch (AmbiguousIdentifierException | CommunicationException e) {
 			Notify.errNotify("Exception occured while loading details about compute.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Cannot load details about compute.", e);
 		}
 
 	}
@@ -103,7 +107,7 @@ public class CreateView extends VerticalLayout implements PolledView {
 			getUI().getNavigator().navigateTo("compute/" + path.substring(path.lastIndexOf('/') + 1));
 		} catch (EntityBuildingException | CommunicationException | InvalidAttributeValueException e) {
 			Notify.errNotify("Exception occured while creating compute.", e.getMessage());
-			System.out.println(e.getMessage());
+			logger.error("Error creating compute.", e);
 		}
 	}
 
