@@ -171,7 +171,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 			compute = OCCI.getOCCI(getSession()).getCompute(compute.getResource().getLocation());
 			fillCompute();
 		} catch (CommunicationException e) {
-			Notify.errNotify("Exception occured while getting compute detail.", e.getMessage());
+			Notify.warnNotify("Exception occured while getting compute detail.", e.getMessage());
 			logger.error("Cannot get compute detail.", e);
 		}
 	}

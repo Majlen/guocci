@@ -108,7 +108,7 @@ public class NetworkView extends VerticalLayout implements PolledView {
 			network = parentResource.getNetwork(network.getResource().getId());
 			fillDetails();
 		} catch (CommunicationException e) {
-			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
+			Notify.warnNotify("Error getting resource from OCCI.", e.getMessage());
 			logger.error("Cannot get network detail.", e);
 		}
 	}

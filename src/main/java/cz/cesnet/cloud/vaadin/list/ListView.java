@@ -52,7 +52,7 @@ public class ListView extends VerticalLayout implements PolledView {
 				list.addComponent(detail);
 			}
 		} catch (CommunicationException e) {
-			Notify.errNotify("Exception occurred while listing available computes.", e.getMessage());
+			Notify.warnNotify("Exception occurred while listing available computes.", e.getMessage());
 			logger.error("Error listing user's computes.", e);
 		}
 	}

@@ -109,7 +109,7 @@ public class StorageView extends VerticalLayout implements PolledView {
 			storage = parentResource.getStorage(storage.getResource().getId());
 			fillDetails();
 		} catch (CommunicationException e) {
-			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
+			Notify.warnNotify("Error getting resource from OCCI.", e.getMessage());
 			logger.error("Cannot get storage detail.", e);
 		}
 	}
