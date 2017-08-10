@@ -1,10 +1,8 @@
 package cz.cesnet.cloud.vaadin.storage;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
@@ -12,6 +10,7 @@ import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.Storage;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import cz.cesnet.cloud.vaadin.commons.ReadOnlyTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +27,8 @@ public class StorageDetail extends FormLayout {
 
 	public StorageDetail() {
 		super();
-		size = new TextField("Size");
-		state = new TextField("State");
-		state.setReadOnly(true);
+		size = new ReadOnlyTextField("Size");
+		state = new ReadOnlyTextField("State");
 
 		apply = new Button("Apply", VaadinIcons.CHECK);
 		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);

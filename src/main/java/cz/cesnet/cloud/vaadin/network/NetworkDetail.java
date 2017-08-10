@@ -1,16 +1,15 @@
 package cz.cesnet.cloud.vaadin.network;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.*;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import cz.cesnet.cloud.vaadin.commons.ReadOnlyTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +31,12 @@ public class NetworkDetail extends FormLayout {
 
 	public NetworkDetail() {
 		super();
-		vlan = new TextField("VLAN");
-		label = new TextField("Label");
-		address = new TextField("Address");
-		gateway = new TextField("Gateway");
-		allocation = new TextField("Allocation");
-		state = new TextField("State");
-		state.setReadOnly(true);
+		vlan = new ReadOnlyTextField("VLAN");
+		label = new ReadOnlyTextField("Label");
+		address = new ReadOnlyTextField("Address");
+		gateway = new ReadOnlyTextField("Gateway");
+		allocation = new ReadOnlyTextField("Allocation");
+		state = new ReadOnlyTextField("State");
 
 		apply = new Button("Apply", VaadinIcons.CHECK);
 		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);

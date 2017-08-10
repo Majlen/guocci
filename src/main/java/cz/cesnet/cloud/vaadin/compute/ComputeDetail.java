@@ -1,10 +1,8 @@
 package cz.cesnet.cloud.vaadin.compute;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
@@ -12,6 +10,7 @@ import cz.cesnet.cloud.occi.exception.InvalidAttributeValueException;
 import cz.cesnet.cloud.occi.infrastructure.Compute;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import cz.cesnet.cloud.vaadin.commons.ReadOnlyTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +31,11 @@ public class ComputeDetail extends FormLayout {
 
 	public ComputeDetail() {
 		super();
-		cores = new TextField("Cores");
-		hostname = new TextField("Hostname");
-		speed = new TextField("Speed");
-		memory = new TextField("Memory");
-		state = new TextField("State");
-		state.setReadOnly(true);
+		cores = new ReadOnlyTextField("Cores");
+		hostname = new ReadOnlyTextField("Hostname");
+		speed = new ReadOnlyTextField("Speed");
+		memory = new ReadOnlyTextField("Memory");
+		state = new ReadOnlyTextField("State");
 
 		apply = new Button("Apply", VaadinIcons.CHECK);
 		apply.addStyleName(ValoTheme.BUTTON_PRIMARY);
