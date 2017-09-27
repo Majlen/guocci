@@ -45,14 +45,15 @@ public class ListView extends VerticalLayout implements PolledView {
 
 		try {
 			OCCI occi = OCCI.getOCCI(getSession());
-			List <ComputeDAO> computes = occi.getComputes();
+			List<ComputeDAO> computes = occi.getComputes();
 
 			for (ComputeDAO c: computes) {
 				ComputeDetail detail = new ComputeDetail(c);
 				list.addComponent(detail);
 			}
 		} catch (CommunicationException e) {
-			Notify.warnNotify("Exception occurred while listing available computes.", e.getMessage());
+			//TODO: Think of better way to display exceptions. This exception is thrown even when the list is simply empty.
+			//Notify.warnNotify("Exception occurred while listing available computes.", e.getMessage());
 			logger.error("Error listing user's computes.", e);
 		}
 	}
