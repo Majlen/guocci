@@ -2,11 +2,13 @@ package cz.cesnet.cloud.vaadin.storage;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import cz.cesnet.cloud.Configuration;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
@@ -18,10 +20,15 @@ import cz.cesnet.cloud.vaadin.commons.PolledView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Map;
+
 public class StorageView extends VerticalLayout implements PolledView {
 	private static final Logger logger = LoggerFactory.getLogger(StorageView.class);
 
-
+	private OCCI occi;
 	private StorageDAO storage;
 	private StorageDetail storageDetail;
 	private ComputeDAO parentResource;
@@ -61,16 +68,20 @@ public class StorageView extends VerticalLayout implements PolledView {
 	}
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
+		Configuration configuration = (Configuration) VaadinServlet.getCurrent().getServletContext().getAttribute("configuration");
 		ParameterParser parser = new ParameterParser(viewChangeEvent.getParameters());
 		storage = null;
 
 		try {
-			final OCCI occi = OCCI.getOCCI(getSession());
+			Map<String, OCCI> occiMap = OCCI.getOCCI(getSession(), configuration);
+			occi = occiMap.get(URLDecoder.decode(parser.getOtherValues().get("endpoint"), "UTF-8"));
+
 			parentResource = occi.getCompute(parser.getOtherValues().get("compute"));
 			storage = parentResource.getStorage(parser.getID());
 
 			GUOCCI guocci = (GUOCCI) getUI();
-			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId());
+			guocci.addButton(parentResource.getResource().getTitle(), "compute/" + parentResource.getResource().getId() +
+					"&endpoint/" + URLEncoder.encode(storage.getEndpoint().toString(), "UTF-8"));
 			guocci.addButton(storage.getResource().getTitle(), "storage/" + viewChangeEvent.getParameters());
 
 			fillDetails();
@@ -87,6 +98,8 @@ public class StorageView extends VerticalLayout implements PolledView {
 		} catch (CommunicationException e) {
 			Notify.errNotify("Error getting resource from OCCI.", e.getMessage());
 			logger.error("Cannot get storage detail.", e);
+		} catch (UnsupportedEncodingException e) {
+			//Should not happen
 		}
 
 	}
@@ -104,7 +117,6 @@ public class StorageView extends VerticalLayout implements PolledView {
 	@Override
 	public void pollMethod() {
 		try {
-			OCCI occi = OCCI.getOCCI(getSession());
 			parentResource = occi.getCompute(parentResource.getResource().getLocation());
 			storage = parentResource.getStorage(storage.getResource().getId());
 			fillDetails();

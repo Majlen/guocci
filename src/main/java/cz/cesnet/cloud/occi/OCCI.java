@@ -1,6 +1,7 @@
 package cz.cesnet.cloud.occi;
 
 import com.vaadin.server.VaadinSession;
+import cz.cesnet.cloud.Configuration;
 import cz.cesnet.cloud.occi.api.Client;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.api.http.HTTPClient;
@@ -12,43 +13,49 @@ import cz.cesnet.cloud.occi.infrastructure.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class OCCI {
 	private HTTPAuthentication auth;
 	private Model model;
 	private URI endpoint;
 	private Client client;
+	private static String certPath = "/tmp/x509up_u1000";
 
-	public static OCCI getOCCI(VaadinSession session) throws CommunicationException {
-		OCCI occi = null;
+	public static Map<String, OCCI> getOCCI(VaadinSession session, Configuration configuration) throws CommunicationException {
+		Map<String, OCCI> occiMap = null;
+
 		if (session != null) {
-			occi = session.getAttribute(OCCI.class);
+			occiMap = (Map<String, OCCI>)session.getAttribute("occi_clients");
 		}
 
-		if (occi == null) {
-			occi = new OCCI();
+		if (occiMap == null) {
+			occiMap = new HashMap<>();
+
+			for (URI uri: configuration.getSourceURI()) {
+				//TODO: check for Communication exception (if one endpoint fails, everything fails)
+				OCCI occi = new OCCI(certPath, uri, configuration.getAuthCAPath());
+				occiMap.put(occi.getEndpoint().toString(), occi);
+			}
+
 			if (session != null) {
-				session.setAttribute(OCCI.class, occi);
+				session.setAttribute("occi_clients", occiMap);
 			}
 		}
 
-		return occi;
+		return occiMap;
 	}
 
-	private OCCI() throws CommunicationException {
-		this("/tmp/x509up_u1000", URI.create("https://carach5.ics.muni.cz:11443"));
-	}
-
-	private OCCI(String certificate, URI endpoint) throws CommunicationException {
+	private OCCI(String certificate, URI endpoint, String CAPath) throws CommunicationException {
 		this.endpoint = endpoint;
 		auth = new VOMSAuthentication(certificate);
-		auth.setCAPath("/etc/grid-security/certificates");
+		auth.setCAPath(CAPath);
 		client = new HTTPClient(endpoint, auth);
 		model = client.getModel();
+	}
+
+	public URI getEndpoint() {
+		return endpoint;
 	}
 
 	public List<ComputeDAO> getComputes() throws CommunicationException {

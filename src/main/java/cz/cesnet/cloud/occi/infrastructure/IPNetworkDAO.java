@@ -141,6 +141,10 @@ public class IPNetworkDAO {
 		return resource;
 	}
 
+	public URI getEndpoint() {
+		return occi.getEndpoint();
+	}
+
 	public void up() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(NETWORK_UP));
 		occi.performAction(URI.create(resource.getLocation()), action);

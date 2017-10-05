@@ -88,6 +88,10 @@ public class StorageDAO {
 		return resource;
 	}
 
+	public URI getEndpoint() {
+		return occi.getEndpoint();
+	}
+
 	public void online() throws CommunicationException {
 		ActionInstance action = new ActionInstance(resource.getAction(STORAGE_ONLINE));
 		occi.performAction(URI.create(resource.getLocation()), action);

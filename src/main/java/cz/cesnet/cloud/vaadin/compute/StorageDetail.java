@@ -7,6 +7,9 @@ import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class StorageDetail extends Panel {
 	private ComputeDAO compute;
 	private StorageDAO storage;
@@ -30,8 +33,13 @@ public class StorageDetail extends Panel {
 
 		Button detail = new Button("Detail", VaadinIcons.ELLIPSIS_DOTS_V);
 		detail.addClickListener(clickEvent -> {
-			getUI().getNavigator().navigateTo("storage/" + storage.getResource().getId() +
-					"&compute/" + compute.getResource().getId());
+			try {
+				getUI().getNavigator().navigateTo("storage/" + storage.getResource().getId() +
+						"&compute/" + compute.getResource().getId() + "&endpoint/" +
+						URLEncoder.encode(storage.getEndpoint().toString(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				//TODO
+			}
 		});
 
 		layout.addComponent(detail);

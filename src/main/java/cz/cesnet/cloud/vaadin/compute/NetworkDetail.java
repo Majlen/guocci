@@ -6,6 +6,9 @@ import com.vaadin.ui.*;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 import cz.cesnet.cloud.occi.infrastructure.IPNetworkDAO;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class NetworkDetail extends Panel {
 	private ComputeDAO compute;
 	private IPNetworkDAO network;
@@ -39,8 +42,13 @@ public class NetworkDetail extends Panel {
 
 		Button detail = new Button("Detail", VaadinIcons.ELLIPSIS_DOTS_V);
 		detail.addClickListener(clickEvent -> {
-			getUI().getNavigator().navigateTo("network/" + network.getResource().getId() +
-					"&compute/" + compute.getResource().getId());
+			try {
+				getUI().getNavigator().navigateTo("network/" + network.getResource().getId() +
+						"&compute/" + compute.getResource().getId() + "&endpoint/" +
+						URLEncoder.encode(network.getEndpoint().toString(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				//TODO
+			}
 		});
 
 		layout.addComponent(detail);

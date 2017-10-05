@@ -2,8 +2,10 @@ package cz.cesnet.cloud.vaadin.compute;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import cz.cesnet.cloud.Configuration;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
@@ -12,15 +14,20 @@ import cz.cesnet.cloud.occi.infrastructure.StorageDAO;
 import cz.cesnet.cloud.vaadin.GUOCCI;
 import cz.cesnet.cloud.vaadin.commons.DeleteWindow;
 import cz.cesnet.cloud.vaadin.commons.Notify;
+import cz.cesnet.cloud.vaadin.commons.ParameterParser;
 import cz.cesnet.cloud.vaadin.commons.PolledView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
 
 public class ComputeView extends VerticalLayout implements PolledView {
 	private static final Logger logger = LoggerFactory.getLogger(ComputeView.class);
 
+	private OCCI occi;
 	private ComputeDAO compute;
 	private ComputeDetail computeDetail;
 	private VerticalLayout linksDetail;
@@ -109,12 +116,18 @@ public class ComputeView extends VerticalLayout implements PolledView {
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
+		Configuration configuration = (Configuration) VaadinServlet.getCurrent().getServletContext().getAttribute("configuration");
+		ParameterParser parameters = new ParameterParser(viewChangeEvent.getParameters());
+
 		compute = null;
 		try {
-			OCCI occi = OCCI.getOCCI(getSession());
-			compute = occi.getCompute(viewChangeEvent.getParameters());
+			Map<String, OCCI> occiMap = OCCI.getOCCI(getSession(), configuration);
+			occi = occiMap.get(URLDecoder.decode(parameters.getOtherValues().get("endpoint"), "UTF-8"));
+			compute = occi.getCompute(parameters.getID());
 		} catch (CommunicationException e) {
 			logger.error("Cannot get compute.", e);
+		} catch (UnsupportedEncodingException e) {
+			//Should not happen
 		}
 
 		GUOCCI guocci = (GUOCCI) getUI();
@@ -168,7 +181,7 @@ public class ComputeView extends VerticalLayout implements PolledView {
 	@Override
 	public void pollMethod() {
 		try {
-			compute = OCCI.getOCCI(getSession()).getCompute(compute.getResource().getLocation());
+			compute = occi.getCompute(compute.getResource().getLocation());
 			fillCompute();
 		} catch (CommunicationException e) {
 			Notify.warnNotify("Exception occured while getting compute detail.", e.getMessage());

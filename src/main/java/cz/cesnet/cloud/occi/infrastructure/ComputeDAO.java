@@ -30,7 +30,9 @@ public class ComputeDAO {
 	}
 
 	public Architecture getArchitecture() {
-		switch (resource.getValue(Compute.ARCHITECTURE_ATTRIBUTE_NAME)) {
+		String arch = resource.getValue(Compute.ARCHITECTURE_ATTRIBUTE_NAME);
+
+		switch (arch != null ? arch  : "x64") {
 			case "x86":
 				return Architecture.X_86;
 			case "x64":
@@ -51,11 +53,7 @@ public class ComputeDAO {
 
 	public String getHostname() {
 		String out = resource.getValue(Compute.HOSTNAME_ATTRIBUTE_NAME);
-		if (out == null) {
-			return "";
-		} else {
-			return out;
-		}
+		return (out != null ? out : "");
 	}
 
 	public double getMemory() {
@@ -90,6 +88,10 @@ public class ComputeDAO {
 
 	public Resource getResource() {
 		return resource;
+	}
+
+	public URI getEndpoint() {
+		return occi.getEndpoint();
 	}
 
 	public List<StorageDAO> getStorages() throws CommunicationException {

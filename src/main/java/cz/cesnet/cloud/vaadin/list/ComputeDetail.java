@@ -4,6 +4,9 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
 import cz.cesnet.cloud.occi.infrastructure.ComputeDAO;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class ComputeDetail extends Panel {
 	public ComputeDetail(ComputeDAO c) {
 		setCaption(c.getResource().getTitle());
@@ -18,7 +21,12 @@ public class ComputeDetail extends Panel {
 
 		Button detail = new Button("Detail", VaadinIcons.ELLIPSIS_DOTS_V);
 		detail.addClickListener(clickEvent -> {
-			getUI().getNavigator().navigateTo("compute/" + c.getResource().getId());
+			try {
+			getUI().getNavigator().navigateTo("compute/" + c.getResource().getId() + "&endpoint/" +
+					URLEncoder.encode(c.getEndpoint().toString(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				//TODO
+			}
 		});
 
 		layout.addComponent(detail);

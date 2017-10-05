@@ -4,8 +4,10 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import cz.cesnet.cloud.Configuration;
 import cz.cesnet.cloud.occi.OCCI;
 import cz.cesnet.cloud.occi.api.EntityBuilder;
 import cz.cesnet.cloud.occi.api.exception.CommunicationException;
@@ -26,23 +28,25 @@ import java.util.Map;
 
 public class CreateView extends VerticalLayout implements PolledView {
 	private static final Logger logger = LoggerFactory.getLogger(CreateView.class);
-
-	private static final String chooseURI = "http://localhost:8080/chooser/";
+	Configuration configuration;
 
 	private EntityBuilder entityBuilder;
 	private TextField title = new TextField("Title");
+	private OCCI occi;
 	private Mixin os_tpl;
 	private VerticalLayout os_tplLayout = new VerticalLayout();
 	private Mixin res_tpl;
 	private VerticalLayout res_tplLayout = new VerticalLayout();
 
 	public CreateView() {
+		configuration = (Configuration) VaadinServlet.getCurrent().getServletContext().getAttribute("configuration");
+
 		setWidth(100, Unit.PERCENTAGE);
 		setMargin(false);
 
 		Button back = new Button("Back to selection", VaadinIcons.ANGLE_LEFT);
 		back.addStyleName(ValoTheme.BUTTON_DANGER);
-		back.addClickListener(clickEvent -> Page.getCurrent().open(chooseURI, null));
+		back.addClickListener(clickEvent -> Page.getCurrent().open(configuration.getChooserURI(), null));
 
 		Button create = new Button("Create", VaadinIcons.PLUS);
 		create.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -74,7 +78,10 @@ public class CreateView extends VerticalLayout implements PolledView {
 		Map<String, String> parameters = parser.getOtherValues();
 
 		try {
-			OCCI occi = OCCI.getOCCI(getSession());
+			Map<String, OCCI> occiMap = OCCI.getOCCI(getSession(), configuration);
+			logger.debug("Looking for OCCI endpoint {}.", parameters.get("service"));
+			occi = occiMap.get(parameters.get("service"));
+
 			entityBuilder = new EntityBuilder(occi.getModel());
 
 			logger.debug("Adding mixin os_tpl with parameter {}.", parameters.get("image"));
@@ -95,7 +102,6 @@ public class CreateView extends VerticalLayout implements PolledView {
 
 	private void createCompute() {
 		try {
-			OCCI occi = OCCI.getOCCI(getSession());
 			Resource computeResource = entityBuilder.getResource("compute");
 			computeResource.addMixin(os_tpl);
 			computeResource.addMixin(res_tpl);
