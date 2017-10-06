@@ -40,7 +40,16 @@ public class ParameterParser {
 			Map<String, String> out = new HashMap<>();
 			String[] pairs = params.substring(index == 0 ? index : index + 1).split("&");
 			for (String pair : pairs) {
+				boolean lastSlash = false;
+				if (pair.charAt(pair.length() - 1) == '/') {
+					lastSlash = true;
+				}
+
 				String[] keyValue = pair.split("/");
+				if (lastSlash) {
+					keyValue[keyValue.length - 1] +=  "/";
+				}
+
 				if (keyValue.length > 2) {
 					String[] subArray = Arrays.copyOfRange(keyValue, 1, keyValue.length);
 					out.put(keyValue[0], String.join("/", subArray));
