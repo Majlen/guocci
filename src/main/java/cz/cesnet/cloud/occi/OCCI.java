@@ -10,12 +10,16 @@ import cz.cesnet.cloud.occi.api.http.auth.VOMSAuthentication;
 import cz.cesnet.cloud.occi.core.*;
 import cz.cesnet.cloud.occi.exception.AmbiguousIdentifierException;
 import cz.cesnet.cloud.occi.infrastructure.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
 public class OCCI {
+	private static final Logger logger = LoggerFactory.getLogger(OCCI.class);
+
 	private HTTPAuthentication auth;
 	private Model model;
 	private URI endpoint;
@@ -33,6 +37,7 @@ public class OCCI {
 			occiMap = new HashMap<>();
 
 			for (URI uri: configuration.getSourceURI()) {
+				logger.debug("Getting OCCI client {} for user {}.", uri, certPath);
 				//TODO: check for Communication exception (if one endpoint fails, everything fails)
 				OCCI occi = new OCCI(certPath, uri, configuration.getAuthCAPath());
 				occiMap.put(occi.getEndpoint().toString(), occi);
