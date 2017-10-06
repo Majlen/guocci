@@ -23,7 +23,10 @@ import cz.cesnet.cloud.vaadin.commons.PolledView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Map;
 
 public class CreateView extends VerticalLayout implements PolledView {
@@ -80,7 +83,7 @@ public class CreateView extends VerticalLayout implements PolledView {
 		try {
 			Map<String, OCCI> occiMap = OCCI.getOCCI(getSession(), configuration);
 			logger.debug("Looking for OCCI endpoint {}.", parameters.get("service"));
-			occi = occiMap.get(parameters.get("service"));
+			occi = occiMap.get(URLDecoder.decode(parameters.get("service"), "UTF-8"));
 
 			entityBuilder = new EntityBuilder(occi.getModel());
 
@@ -96,6 +99,8 @@ public class CreateView extends VerticalLayout implements PolledView {
 		} catch (AmbiguousIdentifierException | CommunicationException e) {
 			Notify.errNotify("Exception occured while loading details about compute.", e.getMessage());
 			logger.error("Cannot load details about compute.", e);
+		} catch (UnsupportedEncodingException e) {
+			//Should not happen
 		}
 
 	}
@@ -110,10 +115,13 @@ public class CreateView extends VerticalLayout implements PolledView {
 			}
 
 			String path = occi.create(computeResource).getPath();
-			getUI().getNavigator().navigateTo("compute/" + path.substring(path.lastIndexOf('/') + 1));
+			getUI().getNavigator().navigateTo("compute/" + path.substring(path.lastIndexOf('/') + 1) +
+					"&endpoint/" + URLEncoder.encode(occi.getEndpoint().toString(), "UTF-8"));
 		} catch (EntityBuildingException | CommunicationException | InvalidAttributeValueException e) {
 			Notify.errNotify("Exception occured while creating compute.", e.getMessage());
 			logger.error("Error creating compute.", e);
+		} catch (UnsupportedEncodingException e) {
+			//Should not happen
 		}
 	}
 
